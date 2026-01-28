@@ -1,0 +1,144 @@
+---
+title: "Visualizing FEMA NRI Data"
+author: "Aakriti Poudel"
+date: "02/22/2026"
+format:
+  pdf:
+    code-fold: false
+    toc: true
+  html: 
+    code-fold: false
+    toc: true
+execute:
+  warning: false
+  message: false
+editor: source
+editor_options: 
+  chunk_output_type: inline
+---
+
+# FEMA National Risk Index Scores for Counties in California
+
+## Set up
+
+```{r}
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    Setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#.........................load libraries.........................
+# Load necessary libraries
+library(tidyverse)
+library(here)
+library(janitor)
+library(ggplot2)
+
+```
+
+## Import and read data
+
+```{r}
+# Read data set
+nri <- read.csv(here("data", "National_Risk_Index_Counties_807384124455672111.csv")) %>% 
+  clean_names()
+
+```
+
+## Data cleaning and wrangling
+
+```{r}
+# Extract the 50 states
+us_states <- nri %>%
+  filter(state_name %in% state.name)
+
+# Aggregate county to the state level
+states <- us_states %>%  
+  group_by(state_name) %>%
+  # Calculate median value as it is robust to outliers
+  summarize(median_risk_score = median(national_risk_index_score_composite, na.rm = TRUE),
+            # Calculate average national risk score
+            mean_risk_score = mean(national_risk_index_score_composite, na.rm = TRUE),
+            # Calculate average annual expected loss loss score
+            mean_annual_loss = mean(expected_annual_loss_score_composite, na.rm = TRUE), 
+            total_population = sum((population_2020), na.rm = TRUE),
+            n_counties = n(),
+            # Calculate range of risk, minimum to maximum
+            min_risk = min(national_risk_index_score_composite, na.rm = TRUE),
+            max_risk = max(national_risk_index_score_composite, na.rm = TRUE))
+
+# Calculate for California
+california <- states %>% 
+  mutate(is_california = ifelse(state_name == "California", "California", "Other state"),
+    # Create a risk categories
+    risk_category = case_when(
+      median_risk_score < 25 ~ "Very low",
+      median_risk_score < 50 ~ "Low",
+      median_risk_score < 75 ~ "Moderate",
+      median_risk_score < 90 ~ "High",
+      TRUE ~ "Very High")) %>%
+  # Sort by median risk score
+  arrange(desc(median_risk_score))
+
+```
+
+
+```{r}
+#| fig-height: 12
+#| fig-alt: A lollipop chart showing median National Risk Index scores for 50 US states arranged from highest to lowest risk. California, Delaware and New Jersey have the highest risk scores. States like North Dakota, South Dakota and Kansas have the lowest risk scores.
+
+ggplot(california, aes(x = reorder(state_name, median_risk_score), 
+                        y = median_risk_score, 
+                        color = is_california)) +
+  geom_segment(aes(xend = state_name, y = 0, yend = median_risk_score), linewidth = 0.8) +
+  geom_point(size = 2) +
+  coord_flip() +
+  scale_color_manual(values = c("California" = "#c52ec4", "Other state" = "#2640a7")) +
+  labs(x = NULL, 
+       y = "Median risk score", 
+       title = "FEMA’s National Risk Index (NRI) Score for Natural Hazards in US States",
+       subtitle = "The median NRI score for US states",
+       caption = "Data Source: FEMA National Risk Index, 2025",
+       color = NULL) +
+  theme_classic() +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, face = "bold"),
+        legend.key.size = unit(3, "cm"),
+        plot.title = element_text(face = "bold", size = 25),
+        plot.subtitle = element_text(size = 20),
+        plot.caption = element_text(hjust = 0, color = "black", size = 20 ),
+        axis.title.x = element_text(size = 25),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 12))
+```
+
+#### Answer some questions
+1. What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
+
+
+## Identify variables of interest and consider which data types they are
+
+| Variables of interest                | Type of data |
+|--------------------------------------|--------------|
+| State name                           | Categorical  |
+| County name                          | Categorical  |
+| National Risk Index Score Composite  | Numeric      |
+| National Risk Index Rating Composite | Categorical  |
+| Expected Annual Loss Score Composite | Numeric      |
+
+2. How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
+
+**Answer:** I chose a lollipop chart because it shows rankings for all 50 states in a clear, uncluttered way. The horizontal layout also makes the state names easy to read. Other options could be a bar chart, but a bar chart may feel too heavy with 50 states. I settled on the lollipop chart because it keeps the graphic clean, makes ranking easy to see, and helps California stand out relative to other states.
+
+3. Summarize your main finding in no more than two sentences.
+
+**Answer:** Based on FEMA National Risk Index scores, California ranks among the highest-risk states for natural hazards, along with states such as Delaware and New Jersey. In contrast, states like North Dakota, South Dakota and Kansas have the lowest median risk levels.
+
+4. What modifications did you make to this visualization to make it more easily readable?
+
+**Answer:** 
+
+I made several changes to improve readability. The states were ordered from highest to lowest median risk score so comparisons are easy to follow, and California was highlighted in a different color to make it stand out. The chart was flipped so state names are easier to read, the figure height and text sizes were increased to reduce crowding, and a clean theme was used. I also added a clear title, subtitle, caption with the data source, and alt text to improve accessibility.
+
+5. Is there anything you wanted to implement, but didn’t know how? If so, please describe.
+
+**Answer:** I considered adding a vertical reference line to show the national median risk score, but I wasn’t sure how to implement it in the plot. I also thought about using state abbreviations instead of full names to save space, but didn’t know how to join the abbreviation data correctly.
