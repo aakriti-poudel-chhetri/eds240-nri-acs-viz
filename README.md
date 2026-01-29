@@ -1,4 +1,4 @@
-# HW 2: Visualizing FEMA NRI Data
+# Visualizing FEMA NRI Data
 
 This repository contains the details of the Assignment 2 for the course EDS 240 - Data Visualization & Communication for the Master of Environmental Data Science (MEDS) program.
 
@@ -16,7 +16,7 @@ In December 2025, FEMA integrated the National Risk Index into the Resilience An
 
 ## Objective
 
-The objective of this assignment is to explore FEMA’s National Risk Index (NRI) data and identify visualization approaches that are most appropriate for both the data and intended audience. The assignment focuses on preparing and wrangling the data to ensure it is properly structured for visualization, and on building effective, responsible, accessible, and aesthetically pleasing visualizations using the R programming language—primarily with `{ggplot2}` and related extension packages.
+The objective of this assignment is to explore FEMA’s National Risk Index (NRI) data and identify visualization approaches that are most appropriate for both the data and intended audience. The assignment focuses on preparing and wrangling the data to ensure it is properly structured for visualization, and on building effective, responsible, accessible, and aesthetically pleasing visualizations using the R programming language with `{ggplot2}` and related extension packages.
 
 ## Repository Structure
 
