@@ -81,6 +81,7 @@ california <- states %>%
 ## Data visualization
 
 ```{r}
+#| fig-width: 10
 #| fig-height: 12
 #| fig-alt: A horizontal lollipop chart displaying median National Risk Index scores for 50 US states, arranged from highest to lowest risk. Each state is represented by a line segment ending in a dot. California is highlighted in magenta and ranks among the top three highest-risk states alongside Delaware and New Jersey. North Dakota, South Dakota, and Kansas have the lowest median risk scores. The chart uses a classic theme with a white background.
 
@@ -93,19 +94,19 @@ ggplot(california, aes(x = reorder(state_name, median_risk_score),
   scale_color_manual(values = c("California" = "#c52ec4", "Other state" = "#2640a7")) +
   labs(x = NULL, 
        y = "Median risk score", 
-       title = "FEMA’s National Risk Index (NRI) Score for Natural Hazards in US States",
-       subtitle = "The median NRI score for US states",
-       caption = "Data Source: FEMA National Risk Index, 2025",
+       title = "FEMA’s National Risk Index (NRI) Score for Natural Hazards in US",
+       subtitle = "California has the highest median risk score among all US States",
+       caption = "Data source: FEMA National Risk Index, 2025",
        color = NULL) +
   theme_classic() +
-  theme(legend.position = "bottom",
+  theme(legend.position = "none",
         legend.text = element_text(size = 20, face = "bold"),
         legend.key.size = unit(3, "cm"),
-        plot.title = element_text(face = "bold", size = 25),
-        plot.subtitle = element_text(size = 20),
-        plot.caption = element_text(hjust = 0, color = "black", size = 20 ),
-        axis.title.x = element_text(size = 25),
-        axis.text.x = element_text(size = 20),
+        plot.title = element_text(face = "bold", size = 18),
+        plot.subtitle = element_text(size = 16),
+        plot.caption = element_text(hjust = 0, color = "black", size = 16 ),
+        axis.title.x = element_text(size = 16),
+        axis.text.x = element_text(size = 16),
         axis.text.y = element_text(size = 12))
 ```
 
