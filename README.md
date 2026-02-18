@@ -22,7 +22,7 @@ The American Community Survey (ACS) is a nationwide, continuous survey conducted
 
 The ACS releases data in two formats: 1-year estimates (covering areas with populations of 65,000 or more) and 5-year estimates (covering all geographic areas). The 1-year estimates provide the most current snapshot of demographic characteristics, while the 5-year estimates offer greater statistical reliability for smaller geographic areas and populations. This makes the ACS an essential tool for understanding how different communities experience social, economic, and environmental conditions.
 
-
+![](image/nri-acs-ethnicity.png)
 
 ## Objective
 
